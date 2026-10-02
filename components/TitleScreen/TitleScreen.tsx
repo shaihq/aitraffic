@@ -4,6 +4,15 @@ import { useEffect } from 'react';
 import type { SoundMode } from '@/audio/AudioManager';
 import { Segmented } from '../ui/Segmented';
 import { IconInfo } from '../ui/icons';
+import { LoadingBackdrop } from './LoadingBackdrop';
+
+/** Splits a word into letters that animate in one after another. */
+const letters = (text: string, start: number, step: number) =>
+  [...text].map((ch, i) => (
+    <span key={i} className="logo__ch" style={{ ['--i' as string]: `${start + i * step}s` }}>
+      {ch === ' ' ? '\u00a0' : ch}
+    </span>
+  ));
 
 export type LoadStage = 'connecting' | 'loading' | 'building' | 'opening' | 'ready' | 'error';
 
@@ -46,13 +55,20 @@ export function TitleScreen({ stage, error, leaving, sound, status, onSound, onS
 
   return (
     <div className={`title${ready ? ' is-ready' : ''}${leaving ? ' is-leaving' : ''}`} aria-live="polite">
-      <div className="title__backdrop" aria-hidden="true" />
+      <div className="title__backdrop">
+        <LoadingBackdrop />
+      </div>
       <div className="title__shade" aria-hidden="true" />
 
       <div className="title__logo">
-        <h1 className="logo">
-          <span className="logo__word">AI TRAFFIC</span>
-          <span className="logo__sub">IN BENGALURU</span>
+        <h1 className="logo" aria-label="AI Traffic in Bengaluru">
+          <span className="logo__word" aria-hidden="true">
+            {letters('AI TRAFFIC', 0.15, 0.06)}
+          </span>
+          <span className="logo__sub" aria-hidden="true">
+            {letters('IN BENGALURU', 0.95, 0.045)}
+            <span className="logo__caret" />
+          </span>
         </h1>
         <p className="title__tag">Live traffic across the AI model ecosystem</p>
         <p className="title__sub">A miniature Bangalore where every car is AI demand, from real OpenRouter usage.</p>
